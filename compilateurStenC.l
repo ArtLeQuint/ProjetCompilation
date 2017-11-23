@@ -3,11 +3,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "y.tab.h"
+
+int m; // Cet entier va permettre de savoir si on ferme un MAIN = 1, un IF = 2, un WHILE = 3, un FOR = 4..., 0 si jamais rien ouvert
 %}
 ent [0-9]+
-ope [\+\-\*\/\(\)]
+declaration "int "|"stencil "
 %%
-{ent} {yylval.val=atoi(yytext);printf("entier : %d\n", yylval.val);return ENTIER;}
-{ope} {printf("ope\n");return yytext[0];}
-"\n"  {printf("truc\n");return yytext[0];}
+"int main(void) {" {m = 1; return DEBUTMAIN;}
+'}' {if (m == 1) return FINMAIN;}
+{ent} {yylval.val=atoi(yytext);return INT;}
+declaration {return DECLARATION;}
+"if "
+"for"
+'+'|'-' {return PLUSMOINS;}
+'*'|'/' {return FOISDIV;}
+"\n"  {return yytext[0];}
 %%

@@ -3,8 +3,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 %}
-%union {int val;}
-%token <val> ENTIER
+%union {
+  int Val;
+  char *String;
+  char [2]Ope;
+}
+%token <String> DECLARATION
+%token <String> ID
+%token <Val> INT
+%token <Val> STENCIL
+%token <Ope> PLUSMOINS
+%token <Ope> FOISDIV
+%token <Ope> LOGIQUE
 %type <val> E
 %type <val> T
 %type <val> F
@@ -15,19 +25,20 @@
 %left UMOINS
 %%
 
-ligne : E '\n' {printf("%d\n",$1);exit(0);}
+ligne : E '\n'           {printf("%d\n",$1);exit(0);}
         ;
-E : E '+' T {printf("E1\n");$$ = $1 + $3; }
-    | T
-    | '-' E %prec UMOINS {printf("E2\n");$$ = -($2);}
-    ;
-T : T '*' F {printf("T\n");$$ = $1 * $3; }
-    | F
-    ;
-F : '(' E ')' {printf("F\n");$$ = $2; }
-    | ENTIER
-    ;
-
+E : E '+' T              {$$ = $1 + $3;}
+  | E '-' T              {$$ = $1 - $3;}
+  | T
+  | '-' E %prec UMOINS   {$$ = -($2);}
+  ;
+T : T '*' F              {$$ = $1 * $3;}
+  | T '/' F              {$$ = $1 / $3;}
+  | F
+  ;
+F : '(' E ')'            {$$ = $2;}
+  | INT
+  ;
 %%
 
 int yyerror(char *s) {
