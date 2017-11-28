@@ -63,7 +63,7 @@ L?\"(\\.|[^\\""])*\"	{return(STRING_LITERAL);}
 
 %%
 
-yywrap()
+int yywrap()
 {
 	return(1);
 }
