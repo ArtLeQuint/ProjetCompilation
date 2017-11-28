@@ -1,21 +1,73 @@
-/* Ce code gère l'analyse lexicale pour des expression d'entier actuellement */
-{%
-#include <stdio.h>
-#include <stdlib.h>
-#include "y.tab.h"
+/* Inspiré du LEX ANSI C */
+D			[0-9]
+L			[a-zA-Z_]
 
-int m; // Cet entier va permettre de savoir si on ferme un MAIN = 1, un IF = 2, un WHILE = 3, un FOR = 4..., 0 si jamais rien ouvert
+%{
+#include <stdio.h>
+#include "y.tab.h"
 %}
-ent [0-9]+
-declaration "int "|"stencil "
+
 %%
-"int main(void) {" {m = 1; return DEBUTMAIN;}
-'}' {if (m == 1) return FINMAIN;}
-{ent} {yylval.val=atoi(yytext);return INT;}
-declaration {return DECLARATION;}
-"if "
-"for"
-'+'|'-' {return PLUSMOINS;}
-'*'|'/' {return FOISDIV;}
-"\n"  {return yytext[0];}
+(\/\*[^\*\/]*\*\/) {/* Commentaire, pour l'instant on ne fait rien, peut être à ajouter au fichier mips après. */}
+(\/\/.*\n)         {/* Commentaire, pour l'instant on ne fait rien, peut être à ajouter au fichier mips après. */}
+
+"else"		{return(ELSE);}
+"for"			{return(FOR);}
+"if"			{return(IF);}
+"int"			{return(INT);}
+"return"	{return(RETURN);}
+"while"		{return(WHILE);}
+
+{L}({L}|{D})*		{return ID;}
+
+{D}+ {return NUMBER;}
+
+L?\"(\\.|[^\\""])*\"	{return(STRING_LITERAL);}
+
+"+="			{return(ADD_ASSIGN);}
+"-="			{return(SUB_ASSIGN);}
+"*="			{return(MUL_ASSIGN);}
+"/="			{return(DIV_ASSIGN);}
+"%="			{return(MOD_ASSIGN);}
+"++"		{return(INC_OP);}
+"--"		{return(DEC_OP);}
+"&&"		{return(AND_OP);}
+"||"		{return(OR_OP);}
+"<="		{return(LE_OP);}
+">="		{return(GE_OP);}
+"=="		{return(EQ_OP);}
+"!="		{return(NE_OP);}
+";"			{return(';');}
+"{"		  {return('{');}
+"}"	    {return('}');}
+","			{return(',');}
+":"			{return(':');}
+"="			{return('=');}
+"("			{return('(');}
+")"			{return(')');}
+"["		  {return('[');}
+"]"		  {return(']');}
+"."			{return('.');}
+"&"			{return('&');}
+"!"			{return('!');}
+"~"			{return('~');}
+"-"			{return('-');}
+"+"			{return('+');}
+"*"			{return('*');}
+"/"			{return('/');}
+"%"			{return('%');}
+"<"			{return('<');}
+">"			{return('>');}
+"^"			{return('^');}
+"|"			{return('|');}
+"?"			{return('?');}
+
+[ \t\v\n\f]		{}
+.			        {return UNKNOWN;}
+
 %%
+
+yywrap()
+{
+	return(1);
+}
