@@ -1,10 +1,16 @@
+%{
+#include <stdio.h>
+#include <stdlib.h>
+%}
+
 %token IDENTIFIER NUMBER STRING_LITERAL MAIN
 %token INC_OP DEC_OP LE_OP GE_OP EQ_OP NE_OP
 %token AND_OP OR_OP
+%token MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN SUB_ASSIGN
 
-%token INT
+%token INT STENCIL
 
-%token IF ELSE WHILE FOR RETURN
+%token IF ELSE WHILE FOR RETURN CONTINUE
 
 %left AND_OP
 %left OR_OP
@@ -33,7 +39,6 @@ function_declaration
 /* EXPRESSIONS */
 primary_expression
 	: IDENTIFIER
-	| CONSTANT
 	| STRING_LITERAL
 	| '(' expression ')'
 	;
@@ -43,11 +48,6 @@ postfix_expression
 	| postfix_expression '[' expression ']'
 	| postfix_expression INC_OP
 	| postfix_expression DEC_OP
-	;
-
-argument_expression_list
-	: assignment_expression
-	| argument_expression_list ',' assignment_expression
 	;
 
 unary_expression
@@ -62,9 +62,9 @@ unary_expression
 
 multiplicative_expression
   : unary_expression
-	| multiplicative_expression '*' cast_expression
-	| multiplicative_expression '/' cast_expression
-	| multiplicative_expression '%' cast_expression
+	| multiplicative_expression '*' unary_expression
+	| multiplicative_expression '/' unary_expression
+	| multiplicative_expression '%' unary_expression
 	;
 
 additive_expression
@@ -75,10 +75,10 @@ additive_expression
 
 relational_expression
   : additive_expression
-	| relational_expression '<' shift_expression
-	| relational_expression '>' shift_expression
-	| relational_expression LE_OP shift_expression
-	| relational_expression GE_OP shift_expression
+	| relational_expression '<' additive_expression
+	| relational_expression '>' additive_expression
+	| relational_expression LE_OP additive_expression
+	| relational_expression GE_OP additive_expression
 	;
 
 equality_expression
@@ -89,7 +89,7 @@ equality_expression
 
 logical_and_expression
 	: equality_expression
-	| logical_and_expression AND_OP inclusive_or_expression
+	| logical_and_expression AND_OP equality_expression
 	;
 
 logical_or_expression
@@ -129,7 +129,7 @@ declarator_list
 
 declarator
   : IDENTIFIER
-  | delcarator [assignement_expression]
+  | declarator [assignement_expression]
   ;
 
 type_specifier
@@ -172,12 +172,10 @@ expression_statement
 selection_statement
 	: IF '(' expression ')' statement
 	| IF '(' expression ')' statement ELSE statement
-	| SWITCH '(' expression ')' statement
 	;
 
 iteration_statement
 	: WHILE '(' expression ')' statement
-	| DO statement WHILE '(' expression ')' ';'
 	| FOR '(' expression_statement expression_statement ')' statement
 	| FOR '(' expression_statement expression_statement expression ')' statement
 	;
@@ -189,7 +187,18 @@ jump_statement
 	;
 %%
 
-int main() {
+int main(int argc, char *argv) {
+  if (argc != 2) {
+    fprintf(stderr, "usage : %s file_name\n", argv[0]);
+    exit(1);
+  }
+  FILE *yyin = fopen(argv[1], "r");
+  char *outname = "mips.s";
+  FILE *yyout = fopen(outname, "w");
+  if (yyin == NULL || yyout == NULL) {
+    fprintf(stderr, "usage : cannot open file %s or cannot open outfile\n", argv[1]);
+    exit(1);
+  }
   int result = yyparse();
   printf("Compilation result : %d\n", result);
 }

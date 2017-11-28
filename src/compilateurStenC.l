@@ -4,7 +4,7 @@ L			[a-zA-Z_]
 
 %{
 #include <stdio.h>
-#include "y.tab.h"
+#include "cfss.y.h"
 %}
 
 %%
@@ -59,7 +59,7 @@ L?\"(\\.|[^\\""])*\"	{return(STRING_LITERAL);}
 ">"			{return('>');}
 
 [ \t\v\n\f]		{}
-.			        {return UNKNOWN;}
+.			        {}
 
 %%
 
