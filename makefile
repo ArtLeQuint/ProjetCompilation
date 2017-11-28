@@ -1,15 +1,22 @@
+SRCPATH=src/
+BINPATH=bin/
+TMPPATH=tmp/
+PREFIX=stenc
 
+all: makedirs $(PREFIX).y $(PREFIX).l
+	gcc -o $(BINPATH)scc \
+		-I $(SRCPATH) -I $(TMPPATH) \
+	 	$(SRCPATH)main.c $(SRCPATH)symtab.c $(TMPPATH)scc.y.c $(TMPPATH)scc.lex.c -ly -lfl
 
-all: y.tab.o lex.yy.o
-	gcc y.tab.o lex.yy.o -ly -lfl -o $(prefixe)
+$(PREFIX).y:
+	yacc -o $(TMPPATH)scc.y.c -d -v $(SRCPATH)$(PREFIX).y
 
-y.tab.o: $(prefixe).y
-	yacc -d $(prefixe).y
-	gcc -c y.tab.c
+$(PREFIX).l:
+	lex -o $(TMPPATH)scc.lex.c $(SRCPATH)$(PREFIX).l
 
-lex.yy.o: $(prefixe).l y.tab.h
-	lex $(prefixe).l
-	gcc -c lex.yy.c
+makedirs:
+	mkdir -p $(BINPATH)
+	mkdir -p $(TMPPATH)
 
 clean:
-	rm -f *.o y.tab.c y.tab.h lex.yy.c a.out $(prefixe)
+	rm *.o y.tab.c y.tab.h lex.yy.c a.out

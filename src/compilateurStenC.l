@@ -11,16 +11,19 @@ L			[a-zA-Z_]
 (\/\*[^\*\/]*\*\/) {/* Commentaire, pour l'instant on ne fait rien, peut être à ajouter au fichier mips après. */}
 (\/\/.*\n)         {/* Commentaire, pour l'instant on ne fait rien, peut être à ajouter au fichier mips après. */}
 
-"else"		{return(ELSE);}
-"for"			{return(FOR);}
-"if"			{return(IF);}
-"int"			{return(INT);}
-"return"	{return(RETURN);}
-"while"		{return(WHILE);}
+"else"				{return(ELSE);}
+"for"					{return(FOR);}
+"if"					{return(IF);}
+"int"					{return(INT);}
+"return"			{return(RETURN);}
+"while"				{return(WHILE);}
+"stencil"			{return(STENCIL);}
+"continue"		{return(CONTINUE);}
+"main(void)"  {return(MAIN);}
 
-{L}({L}|{D})*		{return ID;}
+{L}({L}|{D})*		{return(IDENTIFIER);}
 
-{D}+ {return NUMBER;}
+{D}+ 					  {return(NUMBER);}
 
 L?\"(\\.|[^\\""])*\"	{return(STRING_LITERAL);}
 
@@ -47,10 +50,6 @@ L?\"(\\.|[^\\""])*\"	{return(STRING_LITERAL);}
 ")"			{return(')');}
 "["		  {return('[');}
 "]"		  {return(']');}
-"."			{return('.');}
-"&"			{return('&');}
-"!"			{return('!');}
-"~"			{return('~');}
 "-"			{return('-');}
 "+"			{return('+');}
 "*"			{return('*');}
@@ -58,9 +57,6 @@ L?\"(\\.|[^\\""])*\"	{return(STRING_LITERAL);}
 "%"			{return('%');}
 "<"			{return('<');}
 ">"			{return('>');}
-"^"			{return('^');}
-"|"			{return('|');}
-"?"			{return('?');}
 
 [ \t\v\n\f]		{}
 .			        {return UNKNOWN;}
