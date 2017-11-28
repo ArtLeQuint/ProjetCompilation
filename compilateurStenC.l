@@ -24,11 +24,11 @@ L			[a-zA-Z_]
 
 L?\"(\\.|[^\\""])*\"	{return(STRING_LITERAL);}
 
-"+="			{return(ADD_ASSIGN);}
-"-="			{return(SUB_ASSIGN);}
-"*="			{return(MUL_ASSIGN);}
-"/="			{return(DIV_ASSIGN);}
-"%="			{return(MOD_ASSIGN);}
+"+="		{return(ADD_ASSIGN);}
+"-="		{return(SUB_ASSIGN);}
+"*="		{return(MUL_ASSIGN);}
+"/="		{return(DIV_ASSIGN);}
+"%="		{return(MOD_ASSIGN);}
 "++"		{return(INC_OP);}
 "--"		{return(DEC_OP);}
 "&&"		{return(AND_OP);}
