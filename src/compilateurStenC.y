@@ -1,9 +1,12 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include "sllist.h"
 
-int yyparse();
 int yyerror();
+int yyparse();
+char quadList[1000][4];
+int nextquad = 0;
 int yylex();
 %}
 
