@@ -58,8 +58,6 @@ unary_expression
 	: postfix_expression
 	| INC_OP unary_expression
 	| DEC_OP unary_expression
-  | unary_expression INC_OP
-  | unary_expression DEC_OP
   | '-' unary_expression %prec UOPE
   | '+' unary_expression %prec UOPE
   ;
@@ -129,11 +127,12 @@ declaration
 declarator_list
   : declarator
   | declarator_list ',' declarator
+  | declarator_list ',' declarator '[' assignment_expression ']'
+  | declarator_list ',' declarator '=' assignment_expression
   ;
 
 declarator
   : IDENTIFIER
-  | declarator [assignement_expression]
   ;
 
 type_specifier
