@@ -1,13 +1,8 @@
 %{
-#include <stdio.h>
-#include <stdlib.h>
-#include "sllist.h"
+  #include "EXPRc.h"
 
-int yyerror();
-int yyparse();
-char quadList[1000][4];
-int nextquad = 0;
-int yylex();
+  extern void yyerror(const char * s);
+  extern int yylex();
 %}
 
 %token IDENTIFIER NUMBER STRING_LITERAL MAIN
@@ -209,4 +204,9 @@ int main(int argc, char *argv[]) {
   printf("Compilation result : %d\n", result);
 
   return 0;
+}
+
+void yyerror(const char * s)
+{
+    fprintf(stderr,"%s\n",s);
 }
