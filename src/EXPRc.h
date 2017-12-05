@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "lib.h"
 
-struct symtable * SYMTAB;
-struct code * CODE;
+symtable * SYMTAB;
+code * CODE;
 
 extern int yyparse();

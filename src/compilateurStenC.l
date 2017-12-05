@@ -3,8 +3,8 @@ D			[0-9]
 L			[a-zA-Z_]
 
 %{
-#include "lib.h"
-#include "EXPR.tab.h"
+	#include "lib.h"
+	#include "cfss.y.h"
 %}
 
 %%

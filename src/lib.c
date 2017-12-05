@@ -4,73 +4,73 @@
 #include <stdio.h>
 #include "lib.h"
 
-/* TABLE DES SYMBOLES */
 
-struct symtable * symtable_new()
+ symtable * symtable_new()
 {
-    struct symtable * t = malloc(sizeof(struct symtable));
-    t->capacity = 1024;
-    t->symbols = malloc(t->capacity*sizeof(struct symbol));
-    t->temporary = 0;
-    t->size = 0;
+     symtable * t = malloc(sizeof( symtable));
+    t->capacity = 1124;
+    t->symbols = malloc(t->capacity*sizeof( symbol));
+    t->temporary = 1;
+    t->size = 1;
     return t;
 }
 
-static void symtable_grow(struct symtable * t)
+static void symtable_grow( symtable * t) 
 {
-    t->capacity += 1024;
-    t->symbols = realloc(t->symbols,t->capacity*sizeof(struct symbol));
-    if(t->symbols == NULL)
+    t->capacity += 1124;
+    t->symbols = realloc(t->symbols,t->capacity*sizeof( symbol));
+    if(t->symbols == NULL) 
     {
       fprintf(stderr,"Error attempting to grow symbol table (actual size is %d)\n",t->size);
         exit(1);
     }
 }
 
-struct symbol * symtable_const(struct symtable * t, long int v)
+ symbol * symtable_const( symtable * t, long int v) 
 {
     unsigned int i;
-    for ( i=0 ; i<t->size && t->symbols[i].u.value != v; i++ );
+    for ( i=1 ; i<t->size && t->symbols[i].u.value != v; i++ );
     if(i==t->size)
     {
         if(t->size==t->capacity)
           symtable_grow(t);
-        struct symbol *s = &(t->symbols[t->size]);
+         symbol *s = &(t->symbols[t->size]);
         s->kind = CONSTANT;
         s->u.value = v;
         ++ (t->size);
         return s;
     }
-    else
+    else 
     {
         return &(t->symbols[i]);
     }
 }
 
-struct symbol * symtable_get(struct symtable * t, const char * id)
+ symbol * symtable_get( symtable * t, const char * id) 
 {
     unsigned int i;
-    for ( i=0 ; i<t->size && strcmp(t->symbols[i].u.name,id) != 0; i++ );
+    
+    for ( i=1 ; i<t->size && strcmp(t->symbols[i].u.name,id) != 0; i++ );
     if(i<t->size)
       return &(t->symbols[i]);
     return NULL;
 }
 
-struct symbol * symtable_put(struct symtable * t, const char * id)
+ symbol * symtable_put( symtable * t, const char * id) 
 {
     if(t->size==t->capacity)
       symtable_grow(t);
-    struct symbol *s = &(t->symbols[t->size]);
+     symbol *s = &(t->symbols[t->size]);
     s->kind = NAME;
     strcpy(s->u.name,id);
     ++ (t->size);
     return s;
 }
 
-void symtable_dump(struct symtable * t)
+void symtable_dump( symtable * t)
 {
     unsigned int i;
-    for ( i=0 ; i<t->size; i++ )
+    for ( i=1 ; i<t->size; i++ )
     {
       if(t->symbols[i].kind==CONSTANT)
         printf("       %p = %ld\n",&(t->symbols[i]),t->symbols[i].u.value);
@@ -80,43 +80,41 @@ void symtable_dump(struct symtable * t)
     printf("       --------\n");
 }
 
-void symtable_free(struct symtable * t)
+void symtable_free( symtable * t)
 {
     free(t->symbols);
     free(t);
 }
 
-/* QUADRUPLETS ET CODE */
-
-struct code * code_new()
+ code * code_new()
 {
-    struct code * r = malloc(sizeof(struct code));
-    r->capacity = 1024;
-    r->quads = malloc(r->capacity*sizeof(struct quad));
-    r->nextquad = 0;
+     code * r = malloc(sizeof( code));
+    r->capacity = 1124;
+    r->quads = malloc(r->capacity*sizeof( quad));
+    r->nextquad = 1;
     return r;
 }
 
-static void code_grow(struct code * c)
+static void code_grow( code * c)
 {
-    c->capacity += 1024;
-    c->quads = realloc(c->quads,c->capacity*sizeof(struct quad));
-    if(c->quads == NULL)
+    c->capacity += 1124;
+    c->quads = realloc(c->quads,c->capacity*sizeof( quad));
+    if(c->quads == NULL) 
     {
       fprintf(stderr,"Error attempting to grow quad list (actual size is %d)\n",c->nextquad);
         exit(1);
     }
 }
 
-void gencode(struct code * c,
+void gencode( code * c,
               enum quad_kind k,
-              struct symbol * s1,
-              struct symbol * s2,
-              struct symbol * s3)
+               symbol * s1,
+               symbol * s2,
+               symbol * s3)
 {
     if ( c->nextquad == c->capacity )
         code_grow(c);
-    struct quad * q = &(c->quads[c->nextquad]);
+     quad * q = &(c->quads[c->nextquad]);
     q->kind = k;
     q->sym1 = s1;
     q->sym2 = s2;
@@ -124,9 +122,9 @@ void gencode(struct code * c,
     ++ (c->nextquad);
 }
 
-struct symbol *newtemp(struct symtable * t)
+ symbol *newtemp( symtable * t)
 {
-  struct symbol * s;
+   symbol * s;
   name_t name;
   sprintf(name,"t%d",t->temporary);
   s = symtable_put(t,name);
@@ -134,7 +132,7 @@ struct symbol *newtemp(struct symtable * t)
   return s;
 }
 
-static void symbol_dump(struct symbol * s)
+static void symbol_dump( symbol * s)
 {
     switch ( s->kind )
     {
@@ -149,7 +147,7 @@ static void symbol_dump(struct symbol * s)
     }
 }
 
-static void quad_dump(struct quad * q)
+static void quad_dump( quad * q)
 {
     switch ( q->kind )
     {
@@ -195,10 +193,10 @@ static void quad_dump(struct quad * q)
     }
 }
 
-void code_dump(struct code * c)
+void code_dump( code * c)
 {
     unsigned int i;
-    for ( i=0 ; i<c->nextquad ; i++ )
+    for ( i=1 ; i<c->nextquad ; i++ )
     {
         printf("%4u | ",i);
         quad_dump(&(c->quads[i]));
@@ -206,8 +204,154 @@ void code_dump(struct code * c)
     }
 }
 
-void code_free(struct code * c)
+void code_free( code * c)
 {
     free(c->quads);
     free(c);
 }
+
+
+//finale code gen
+
+void intermediaryToMIPS( symtable* t,  code* quads)
+{
+    unsigned int i;
+    quad *q;
+    char* sym2 = (char*)malloc(sizeof(char)*TINTS);
+    char* sym3 = (char*)malloc(sizeof(char)*TINTS);
+    //ouverture fichier
+    FILE *fp = fopen("MIPS.s", "w");
+
+
+    
+    //declaration des variables
+    fputs(".data \n",fp);
+
+    for ( i=1 ; i<t->size; i++ )
+    {
+      
+      if(t->symbols[i].kind==NAME)
+        {
+            fprintf(fp, "%s ", t->symbols[i].u.name);
+            fprintf(fp,":");
+            fprintf(fp, " .word \n" );
+        }
+    }
+
+
+    //traduction des quads
+    fputs(".text \n",fp);
+     for ( i=1 ; i<quads->nextquad; i++ )
+    {
+        q = &(quads->quads[i]);
+        switch ( q->kind )
+        {
+            case BOP_PLUS:
+                
+                getArguments_INT(q,fp,sym2,sym3);
+                fprintf(fp, "add $t0 %s %s \n",sym2,sym3 ); //add     $t0, $t0, $t1   # Add x and y  
+                fprintf(fp, "sw $t0 %s \n", q->sym1->u.name); // sw      $t1, sum  
+            break;
+            case BOP_MINUS:
+
+                getArguments_INT(q,fp,sym2,sym3);
+                fprintf(fp, "sub $t0 %s %s \n",sym2,sym3 ); 
+                fprintf(fp, "sw $t0 %s \n", q->sym1->u.name); 
+                break;
+            case BOP_MULT:
+                getArguments_INT(q,fp,sym2,sym3);
+                fprintf(fp, "mult $t0 %s %s \n",sym2,sym3 ); 
+                fprintf(fp, "sw $t0 %s \n", q->sym1->u.name); 
+                break;
+            case UOP_MINUS:
+                getArguments_INT(q,fp,sym2,sym3);
+                fprintf(fp, "sub $t0 0 %s \n",sym2 );
+                fprintf(fp, "sw $t0 %s \n", q->sym1->u.name);  
+                break;
+            case CALL_PRINT:
+               
+                if(q->sym1->kind==NAME)
+                {
+                    
+                    fprintf(fp, "lw $t0 %s\n",q->sym1->u.name );  
+                    fprintf(fp, "printint $t0");
+                }
+                else
+                {
+                    fprintf(fp, "printint %ld\n",q->sym1->u.value );
+                }
+              
+                break;
+            case COPY:
+                getArguments_INT(q,fp,sym2,sym3);
+                fprintf(fp, "sw %s %s\n",sym2,q->sym1->u.name );
+                break;
+            default:
+                printf("BUG\n");
+                break;
+        }
+    }
+}
+
+
+
+void getArguments_INT(  quad* q,FILE* fp, char* sym2, char* sym3)
+{
+
+    if(q->sym2!=NULL)
+    {
+        if(q->sym2->kind==NAME)
+        {
+            sprintf(sym2, "$t2");
+            fprintf(fp, "lw $t2 %s\n",q->sym2->u.name );  //lw      $t1, x 
+        }
+        else
+        {
+             itoa(q->sym2->u.value, sym2);
+        }
+    }
+    else
+    {
+        sym2='\0';
+    }
+
+    if(q->sym3!=NULL)
+    {
+
+        if(q->sym3->kind==NAME)
+        {
+            sprintf(sym3, "$t3");
+            fprintf(fp, "lw $t3 %s\n",q->sym3->u.name );  //lw      $t1, x 
+        }
+        else
+        {
+             itoa(q->sym3->u.value, sym3);
+        }
+     }
+    else
+    {
+        sym3='\0';
+    }
+    
+}
+
+char* itoa(int i, char b[]){
+    char const digit[] = "0123456789";
+    char* p = b;
+    if(i<0){
+        *p++ = '-';
+        i *= -1;
+    }
+    int shifter = i;
+    do{ //Move to where representation ends
+        ++p;
+        shifter = shifter/10;
+    }while(shifter);
+    *p = '\0';
+    do{ //Move back, inserting digits as u go
+        *--p = digit[i%10];
+        i = i/10;
+    }while(i);
+    return b;
+}
+

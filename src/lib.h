@@ -1,65 +1,77 @@
 
 
+//Constantes pour taille des  variables
+#define TINTS 12 //taille max d'un int en string : 10 chiffre + un signe + marquer fin de chaine '\0'
+
 /* TABLE DES SYMBOLES */
 
 typedef char name_t[8];
 
-struct symbol {
+typedef struct symbol_t {
   enum { NAME, CONSTANT } kind;
     union {
         name_t name;
         long int value;
     } u;
-};
+}symbol;
 
-struct symtable {
+typedef struct symtable_t {
     unsigned int capacity;
     unsigned int temporary; 
     unsigned int size;
-    struct symbol * symbols;
-};
+     symbol * symbols;
+}symtable;
 
-struct symtable * symtable_new();
+ symtable * symtable_new();
 
-struct symbol * symtable_const(struct symtable * t, long int v);
+ symbol * symtable_const( symtable * t, long int v);
 
-struct symbol * symtable_get(struct symtable * t, const char * s);
+ symbol * symtable_get( symtable * t, const char * s);
 
-struct symbol * symtable_put(struct symtable * t, const char * s);
+ symbol * symtable_put( symtable * t, const char * s);
 
-void symtable_dump(struct symtable * t);
+void symtable_dump( symtable * t);
 
-void symtable_free(struct symtable * t);
+void symtable_free( symtable * t);
 
 
 /* QUADRUPLETS ET CODE */
 
-struct quad {
+typedef struct quad_t {
   enum quad_kind { BOP_PLUS, BOP_MINUS, BOP_MULT, UOP_MINUS, COPY, CALL_PRINT } kind;
-  struct symbol * sym1;
-  struct symbol * sym2;
-  struct symbol * sym3;
-};
+   symbol * sym1;
+   symbol * sym2;
+   symbol * sym3;
+}quad;
 
-struct code {
+typedef struct code_t {
     unsigned int capacity;
     unsigned int nextquad;
-    struct quad * quads;
-};
+     quad * quads;
+}code;
 
-struct code * code_new();
+ code * code_new();
 
-void gencode(struct code * c,
+void gencode( code * c,
               enum quad_kind k,
-              struct symbol * s1,
-              struct symbol * s2,
-              struct symbol * s3);
+               symbol * s1,
+               symbol * s2,
+               symbol * s3);
 
-struct symbol *newtemp(struct symtable * t);
+ symbol *newtemp( symtable * t);
 
-void code_dump(struct code * c);
+void code_dump( code * c);
 
-void code_free(struct code * c);
+void code_free( code * c);
+
+
+//finale code gen
+
+void getArguments_INT( quad* q, FILE* fp,char* sym2, char* sym3);
+
+void intermediaryToMIPS(  symtable* tds,   code* quads);
+
+char* itoa(int i, char b[]);
 
 
 

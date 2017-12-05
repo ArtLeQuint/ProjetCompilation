@@ -3,6 +3,7 @@
 
 /tmp/*
 /bin/*
+*.s
 
 # Object files
 *.o

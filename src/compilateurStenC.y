@@ -188,24 +188,6 @@ jump_statement
 	;
 %%
 
-int main(int argc, char *argv[]) {
-  if (argc != 2) {
-    fprintf(stderr, "usage : %s file_name\n", argv[0]);
-    exit(1);
-  }
-  FILE *yyin = fopen(argv[1], "r");
-  char *outname = "mips.s";
-  FILE *yyout = fopen(outname, "w");
-  if (yyin == NULL || yyout == NULL) {
-    fprintf(stderr, "usage : cannot open file %s or cannot open outfile\n", argv[1]);
-    exit(1);
-  }
-  int result = yyparse();
-  printf("Compilation result : %d\n", result);
-
-  return 0;
-}
-
 void yyerror(const char * s)
 {
     fprintf(stderr,"%s\n",s);
