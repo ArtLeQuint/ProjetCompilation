@@ -1,5 +1,5 @@
 
-#include "EXPRc.h"
+#include "compilateurStenC.h"
 
 int main()
 {
