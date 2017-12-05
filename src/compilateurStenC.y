@@ -1,5 +1,5 @@
 %{
-  #include "EXPRc.h"
+  #include "compilateurStenC.h"
 
   extern void yyerror(const char * s);
   extern int yylex();
