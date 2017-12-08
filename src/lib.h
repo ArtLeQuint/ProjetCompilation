@@ -17,7 +17,7 @@ typedef struct symbol_t {
 
 typedef struct symtable_t {
     unsigned int capacity;
-    unsigned int temporary; 
+    unsigned int temporary;
     unsigned int size;
      symbol * symbols;
 }symtable;
@@ -38,7 +38,7 @@ void symtable_free( symtable * t);
 /* QUADRUPLETS ET CODE */
 
 typedef struct quad_t {
-  enum quad_kind { BOP_PLUS, BOP_MINUS, BOP_MULT, UOP_MINUS, COPY, CALL_PRINT } kind;
+  enum quad_kind { BOP_PLUS, BOP_MINUS, BOP_MULT, UOP_MINUS, UOP_PLUS, COPY, CALL_PRINT } kind;
    symbol * sym1;
    symbol * sym2;
    symbol * sym3;
@@ -72,6 +72,3 @@ void getArguments_INT( quad* q, FILE* fp,char* sym2, char* sym3);
 void intermediaryToMIPS(  symtable* tds,   code* quads);
 
 char* itoa(int i, char b[]);
-
-
-

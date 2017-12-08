@@ -5,7 +5,16 @@
   extern int yylex();
 %}
 
-%token IDENTIFIER NUMBER STRING_LITERAL MAIN
+%union {
+  long int intval;
+  name_t strval;
+  struct {
+      symbol * ptr;
+  } exprval;
+}
+%token STRING_LITERAL MAIN
+%token <strval> IDENTIFIER
+%token <intval> NUMBER
 %token INC_OP DEC_OP LE_OP GE_OP EQ_OP NE_OP
 %token AND_OP OR_OP
 %token MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN SUB_ASSIGN
@@ -13,6 +22,10 @@
 %token INT STENCIL
 
 %token IF ELSE WHILE FOR RETURN CONTINUE
+
+%type <exprval> additive_expression
+%type <exprval> multiplicative_expression
+%type <exprval> unary_expression
 
 %left AND_OP
 %left OR_OP
@@ -41,8 +54,24 @@ function_declaration
 /* EXPRESSIONS */
 primary_expression
 	: IDENTIFIER
+    {
+      symbol * id = symtable_get(SYMTAB,$1);
+      if ( id == NULL )
+      {
+          fprintf(stderr,"Name '%s' undeclared\n",$1);
+          exit(1);
+      }
+      $$.ptr = id;
+    }
+  | NUMBER
+    {
+      $$.ptr = symtable_const(SYMTAB,$1);
+    }
 	| STRING_LITERAL
 	| '(' expression ')'
+    {
+      $$.ptr = $2.ptr;
+    }
 	;
 
 postfix_expression
@@ -57,12 +86,24 @@ unary_expression
 	| INC_OP unary_expression
 	| DEC_OP unary_expression
   | '-' unary_expression %prec UOPE
+    {
+      $$.ptr = newtemp(SYMTAB);
+      gencode(CODE,UOP_MINUS,$$.ptr,$2.ptr,NULL);
+    }
   | '+' unary_expression %prec UOPE
+    {
+      $$.ptr = newtemp(SYMTAB);
+      gencode(CODE,UOP_PLUS,$$.ptr,$2.ptr,NULL);
+    }
   ;
 
 multiplicative_expression
   : unary_expression
 	| multiplicative_expression '*' unary_expression
+    {
+      $$.ptr = newtemp(SYMTAB);
+      gencode(CODE,BOP_MULT,$$.ptr,$1.ptr,$3.ptr);
+    }
 	| multiplicative_expression '/' unary_expression
 	| multiplicative_expression '%' unary_expression
 	;
@@ -70,7 +111,15 @@ multiplicative_expression
 additive_expression
 	: multiplicative_expression
 	| additive_expression '+' multiplicative_expression
+    {
+      $$.ptr = newtemp(SYMTAB);
+      gencode(CODE,BOP_PLUS,$$.ptr,$1.ptr,$3.ptr);
+    }
 	| additive_expression '-' multiplicative_expression
+    {
+      $$.ptr = newtemp(SYMTAB);
+      gencode(CODE,BOP_MINUS,$$.ptr,$1.ptr,$3.ptr);
+    }
 	;
 
 relational_expression
