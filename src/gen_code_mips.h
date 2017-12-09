@@ -12,7 +12,7 @@
 #include "operation.h"
 #include "array_type.h"
 
-extern FILE * output_file;
+extern FILE * fichier_sortie;
 extern SymbolTable symbol_table;
 
 extern int unsigned next_quad_label;
@@ -25,7 +25,7 @@ void jump_operation_code(Quad quad);
 void load_value(Symbol symbol, char* register_name);
 void gen_system_service_const();
 void gen_utils_function();
-void gen_header_comment();
+void gen_entete_comment();
 
 void adresse_operation_tab(Quad quad);
 

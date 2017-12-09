@@ -5,12 +5,13 @@
     #include "array_type.h"
     #include <stdlib.h>
     #include <string.h>
-    #include "y.tab.h"
+    #include "../tmp/cfss.y.h"
 
     void yyerror(char *);
     extern int _line_number;
 
 %}
+%option yylineno
 
 /* Inspiré du LEX ANSI C */
 D			[0-9]
@@ -31,11 +32,22 @@ L			[a-zA-Z_]
 "continue"		{return(CONTINUE);}
 "main(void)"  {return(MAIN);}
 
-{L}({L}|{D})*		{return(IDENTIFIER);}
+{L}({L}|{D})*		{
+                 yylval.string_value = strdup(yytext);
+			           return(IDENTIFIER);
+                }
 
-{D}+ 					  {return(NUMBER);}
+{D}+ 					  {yylval.int_value = atoi(yytext); return(NUMBER);}
 
-L?\"(\\.|[^\\""])*\"	{return(STRING_LITERAL);}
+L?\"(\\.|[^\\""])*\"	{
+                       yylval.string_value = strdup(yytext+1);
+              				 if (yylval.string_value[yyleng-2] != '"')
+              				 	 yyerror("improperly terminated string");
+              				 else
+              					 yylval.string_value[yyleng-2] = 0;
+
+                       return(STRING_LITERAL);
+                     }
 
 "+="		{return(ADD_ASSIGN);}
 "-="		{return(SUB_ASSIGN);}
@@ -73,7 +85,12 @@ L?\"(\\.|[^\\""])*\"	{return(STRING_LITERAL);}
 
 %%
 
-int yywrap()
+void yyerror(char* s)
 {
-	return(1);
+	printf("Erreur near line %d : %s \n",yylineno, s);
+}
+
+int yywrap(void)
+ {
+    return 1;
 }

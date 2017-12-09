@@ -8,11 +8,11 @@
 #include "symbol_table.h"
 #include "array_type.h"
 #include "gen_code_mips.h"
-#include "y.tab.h"
+#include "../tmp/cfss.y.h"
 #include <stdlib.h>
 #include <string.h>
 #define SYMBOL_TABLE_SIZE  251
-FILE* output_file;
+FILE* fichier_sortie;
 extern FILE* yyin;
 extern SymbolTable symbol_table;
 extern Expression program_expression ;
@@ -25,7 +25,7 @@ int main (int argc, char** argv)
 		case 2:
 		 		// Pas de sortie
 				yyin = fopen(argv[1], "r");
-				output_file = fopen("output.s", "w");
+				fichier_sortie = fopen("output.s", "w");
 				printf("-------\n");
 				printf("resultat dans output.s\n\n");
 			printf("--------\n\n");
@@ -33,12 +33,12 @@ int main (int argc, char** argv)
 		case 3:
 				// Une sortie
 				yyin = fopen(argv[1], "r");
-				output_file = fopen(argv[2], "w");
+				fichier_sortie = fopen(argv[2], "w");
 				break;
 		default:
 			// TEST
 			yyin = fopen("test.c", "r");
-			output_file = fopen("output.s", "w");
+			fichier_sortie = fopen("output.s", "w");
 			printf("-------\n");
 			printf("test par défaut, resultat dans output.s\n\n");
 			printf("--------\n\n");
@@ -51,7 +51,7 @@ int main (int argc, char** argv)
 	quad_print(program_expression->code);
 
 	gen_code_mips(program_expression->code);
-	fclose(output_file);
+	fclose(fichier_sortie);
 	quad_free(program_expression->code);
 	quad_list_free(program_expression->nextList);
 
@@ -59,4 +59,5 @@ int main (int argc, char** argv)
 	table_free(symbol_table);
 
 	 return 0;
-}
+
+ }

@@ -11,8 +11,9 @@
 	#include <string.h>
 
 	int yylex(void);
+	void yyerror(char *s);
 	void lex_free();
-	
+
 	extern SymbolTable symbol_table ;
 	extern unsigned int next_quad_label;
 	Expression program_expression;
@@ -27,11 +28,10 @@
 	condition_t condition;
 	expression_t expression;
 	ArrayList array_list;
-	array_ref_t reference_to_array;
 };
 %token STRING_LITERAL MAIN
-%token <strval> IDENTIFIER
-%token <intval> NUMBER
+%token IDENTIFIER
+%token NUMBER
 %token INC_OP DEC_OP LE_OP GE_OP EQ_OP NE_OP
 %token AND_OP OR_OP
 %token MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN SUB_ASSIGN
@@ -39,10 +39,6 @@
 %token INT STENCIL
 
 %token IF ELSE WHILE FOR RETURN CONTINUE
-
-%type <exprval> additive_expression
-%type <exprval> multiplicative_expression
-%type <exprval> unary_expression
 
 %left AND_OP
 %left OR_OP
@@ -243,8 +239,3 @@ jump_statement
 	;
 
 %%
-
-void yyerror(const char * s)
-{
-    fprintf(stderr,"%s\n",s);
-}
