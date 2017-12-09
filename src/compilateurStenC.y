@@ -11,14 +11,12 @@
 	#include <string.h>
 
 	int yylex(void);
-	void yyerror(char *s);
 	void lex_free();
-	
 	
 	extern SymbolTable symbol_table ;
 	extern unsigned int next_quad_label;
 	Expression program_expression;
-	
+
 %}
 
 
@@ -31,7 +29,6 @@
 	ArrayList array_list;
 	array_ref_t reference_to_array;
 };
-%token <symbol> M
 %token STRING_LITERAL MAIN
 %token <strval> IDENTIFIER
 %token <intval> NUMBER
@@ -101,13 +98,11 @@ unary_expression
 	| DEC_OP unary_expression
   | '-' unary_expression %prec UOPE
     {
-      $$.ptr = newtemp(SYMTAB);
-      gencode(CODE,UOP_MINUS,$$.ptr,$2.ptr,NULL);
+
     }
   | '+' unary_expression %prec UOPE
     {
-      $$.ptr = newtemp(SYMTAB);
-      gencode(CODE,UOP_PLUS,$$.ptr,$2.ptr,NULL);
+
     }
   ;
 
@@ -115,8 +110,7 @@ multiplicative_expression
   : unary_expression
 	| multiplicative_expression '*' unary_expression
     {
-      $$.ptr = newtemp(SYMTAB);
-      gencode(CODE,BOP_MULT,$$.ptr,$1.ptr,$3.ptr);
+
     }
 	| multiplicative_expression '/' unary_expression
 	| multiplicative_expression '%' unary_expression
@@ -126,13 +120,11 @@ additive_expression
 	: multiplicative_expression
 	| additive_expression '+' multiplicative_expression
     {
-      $$.ptr = newtemp(SYMTAB);
-      gencode(CODE,BOP_PLUS,$$.ptr,$1.ptr,$3.ptr);
+
     }
 	| additive_expression '-' multiplicative_expression
     {
-      $$.ptr = newtemp(SYMTAB);
-      gencode(CODE,BOP_MINUS,$$.ptr,$1.ptr,$3.ptr);
+
     }
 	;
 
@@ -152,12 +144,12 @@ equality_expression
 
 logical_and_expression
 	: equality_expression
-	| logical_and_expression AND_OP M equality_expression
+	| logical_and_expression AND_OP equality_expression
 	;
 
 logical_or_expression
 	: logical_and_expression
-	| logical_or_expression OR_OP M logical_and_expression
+	| logical_or_expression OR_OP logical_and_expression
 	;
 
 assignment_expression
@@ -234,14 +226,14 @@ expression_statement
 	;
 
 selection_statement
-	: IF '(' expression ')' M statement
-	| IF '(' expression ')' M statement ELSE M statement
+	: IF '(' expression ')' statement
+	| IF '(' expression ')' statement ELSE statement
 	;
 
 iteration_statement
-	: WHILE '(' expression ')' M statement
-	| FOR '(' expression_statement expression_statement ')' M statement
-	| FOR '(' expression_statement expression_statement expression ')' M statement
+	: WHILE '(' expression ')' statement
+	| FOR '(' expression_statement expression_statement ')' statement
+	| FOR '(' expression_statement expression_statement expression ')' statement
 	;
 
 jump_statement
@@ -250,9 +242,6 @@ jump_statement
 	| RETURN expression ';'
 	;
 
-M
-	: {$$ = table_new_number(symbol_table, next_quad_label);}
-	;
 %%
 
 void yyerror(const char * s)
