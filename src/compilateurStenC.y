@@ -185,7 +185,6 @@ ident_val
 
 	}
 	| IDENTIFIER	{
-
 	}
 	;
 
