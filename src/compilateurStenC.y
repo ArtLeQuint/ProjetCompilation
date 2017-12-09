@@ -170,23 +170,7 @@ expression
 /* DECLARATIONS */
 
 integer_declaration
-	: INT ident_list	{ }
-	;
-
-ident_list
-	: ident_val { }
-	| ident_val  ','ident_list	{
-	 }
-	;
-
-ident_val
-	: IDENTIFIER '=' expression
-	{
-
-	}
-	| IDENTIFIER	{
-
-	}
+	: INT assignment_expression	{ }
 	;
 
 /* STATEMENTS */
@@ -197,18 +181,12 @@ statement
 	| selection_statement
 	| iteration_statement
 	| jump_statement
+	| integer_declaration
 	;
 
 compound_statement
 	: '{' '}'
 	| '{' statement_list '}'
-	| '{' integer_declaration '}'
-	| '{' integer_declaration_list statement_list '}'
-	;
-
-integer_declaration_list
-	: integer_declaration
-	| integer_declaration_list integer_declaration
 	;
 
 statement_list
@@ -235,7 +213,6 @@ iteration_statement
 jump_statement
 	: CONTINUE ';'
 	| RETURN ';'
-	| INT expression ';'
 	| RETURN expression ';'
 	;
 
