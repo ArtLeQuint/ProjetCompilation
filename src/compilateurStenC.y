@@ -168,25 +168,25 @@ expression
 	;
 
 /* DECLARATIONS */
-declaration
-	: type_specifier ';'
-  | type_specifier declarator_list ';'
+
+integer_declaration
+	: INT ident_list	{ }
 	;
 
-declarator_list
-  : declarator
-  | declarator_list ',' declarator
-  | declarator_list ',' declarator '[' assignment_expression ']'
-  | declarator_list ',' declarator '=' assignment_expression
-  ;
+ident_list
+	: ident_val { }
+	| ident_val  ','ident_list	{
+	 }
+	;
 
-declarator
-  : IDENTIFIER
-  ;
+ident_val
+	: IDENTIFIER '=' expression
+	{
 
-type_specifier
-	: INT
-	| STENCIL
+	}
+	| IDENTIFIER	{
+
+	}
 	;
 
 /* STATEMENTS */
@@ -202,13 +202,13 @@ statement
 compound_statement
 	: '{' '}'
 	| '{' statement_list '}'
-	| '{' declaration_list '}'
-	| '{' declaration_list statement_list '}'
+	| '{' integer_declaration '}'
+	| '{' integer_declaration_list statement_list '}'
 	;
 
-declaration_list
-	: declaration
-	| declaration_list declaration
+integer_declaration_list
+	: integer_declaration
+	| integer_declaration_list integer_declaration
 	;
 
 statement_list
@@ -235,6 +235,7 @@ iteration_statement
 jump_statement
 	: CONTINUE ';'
 	| RETURN ';'
+	| INT expression ';'
 	| RETURN expression ';'
 	;
 
