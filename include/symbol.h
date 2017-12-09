@@ -1,4 +1,4 @@
-/*Fait par Romain Pelletie et Arthur Delrue
+/*Fait par Romain Pelletier et Arthur Delrue
  M1 ILC 2017*/
 
 #ifndef DATA_TYPE_H
@@ -16,23 +16,18 @@
 #define STRING_    "String_"
 #define TAILLE_    "Taille_"
 
-/**
- * \struct struct _symbol
- * \typedef struct symbol_t
- * \typedef struct*Symbol
- * Définition du type symbol
- */
+/* Définition du type symbol */
 typedef struct _symbol{
-		char* name; /**< Le nom du symbol*/
-		DataType data_type;/**< le type de symbol*/
-		VariableState state;/**< L'état du symbol*/
+		char* name;
+		DataType data_type;
+		VariableState state;
 		union{
-			int number ;/**< Un Entiers */
-			char*  string;/**< Une chaine de caractère */
-			Array array;/**< Un tableau  */
-		} data;	
-		
-		struct _symbol* successor;/**< Symbol suivant*/
+			int number ;
+			char*  string;
+			Array array;
+		} data;
+
+		struct _symbol* successor;
 } symbol_t, *Symbol;
 
 
@@ -41,11 +36,7 @@ Symbol symbol_new_integer(char* id_name);
 Symbol symbol_new_integer_init(char* id_name, int number);
 Symbol symbol_new_constant(char* id_name, int number);
 Symbol symbol_new_string(char* id_name, char* string);
-Symbol symbol_new_stencil(char* id_name);
-Symbol symbol_new_stencil_init(char* id_name,Array array_data);
-Symbol symbol_new_array(char* id_name);
-Symbol symbol_new_array_init(char* id_name, Array array_data);
-//test
+// Les fonctions de test :
 bool is_constant_symbol(Symbol symbol);
 bool is_integer_symbol(Symbol symbol);
 bool is_string_symbol(Symbol symbol);

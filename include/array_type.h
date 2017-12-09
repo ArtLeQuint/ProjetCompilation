@@ -1,4 +1,4 @@
-/*Fait par Romain Pelletie et Arthur Delrue
+/*Fait par Romain Pelletier et Arthur Delrue
  M1 ILC 2017*/
 #ifndef ARRAY_ELEMENTS_H
 #define ARRAY_ELEMENTS_H
@@ -8,18 +8,13 @@
 #include "my_type.h"
 #include "array_list.h"
 
-/**
- * \struct struct _array
- * \typedef struct array_t
- * \typedef struct *Array
- * Définition du type tableau Array
- */
+/* Les Tableaux */
 typedef struct _array{
-	ArrayList dim_values; /**< Liste des éléments de la dimension*/
-	ArrayList element_list;/**< Liste des éléments du tableau*/
-	int dim_number;/**< Nombre de dimension */
-	int elements_number;/**< Nombre d éléments */
-	int* limits;/**< Les limites pour le calculs des décalage */
+	ArrayList dim_values;
+	ArrayList element_list;
+	int dim_number;
+	int elements_number;
+	int* limits;
 }array_t, *Array;
 
 Array array_new();

@@ -1,11 +1,21 @@
+%{
+    #include "quad.h"
+    #include "symbol.h"
+    #include "symbol_table.h"
+    #include "array_type.h"
+    #include <stdlib.h>
+    #include <string.h>
+    #include "y.tab.h"
+
+    void yyerror(char *);
+    extern int _line_number;
+
+%}
+
 /* Inspiré du LEX ANSI C */
 D			[0-9]
 L			[a-zA-Z_]
 
-%{
-	#include "lib.h"
-	#include "cfss.y.h"
-%}
 
 %%
 (\/\*[^\*\/]*\*\/) {/* Commentaire, pour l'instant on ne fait rien, peut être à ajouter au fichier mips après. */}

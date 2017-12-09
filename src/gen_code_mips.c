@@ -1,16 +1,18 @@
-/*# Définition des fonction de génération de code en mips*/
-
+/**
+ * Définition des fonctions générant du code mips
+ * Romain Pelletier & Arthur Delrue
+*/
 #include "gen_code_mips.h"
 
 void gen_code_mips(Quad root_quad)
 {
 	gen_entete_comment();
-	
+
 	fprintf(fichier_sortie,"\n\t.data\n");
 	// Déclaration de variables
 	table_print_code(symbol_table, fichier_sortie);
 	gen_system_service_const();
-	
+
 	fprintf(fichier_sortie,"\n\t.text\n");
 	fprintf(fichier_sortie,"\n\t.globl main\n\n");
 	fprintf(fichier_sortie,"main:\n\n");
@@ -18,7 +20,7 @@ void gen_code_mips(Quad root_quad)
 	gen_quad_code(root_quad);
 	//Declaration de fonction (print_i , print_f , stenC)
 	gen_utils_function();
-	
+
 }
 
 
@@ -30,47 +32,46 @@ void gen_quad_code(Quad quad)
     switch(quad->operation)
     {
 	// binary operations
-        case Add: 
-        case Sub: 
-        case Mult: 
-        case Div: 
-        case Modulo:
-        case StencilOp: bin_operation_code(quad);
+        case Add:
+        case Sub:
+        case Mult:
+        case Div:
+        case Modulo: bin_operation_code(quad);
                 break;
-                
-        // Single operations  
-        case Assignment:  
-        case UnarySub:  
-        case Increment: 
-        case Abs: 
-        case Decrement: single_operation_code(quad); 
+
+        // Single operations
+        case Assignment:
+        case UnarySub:
+        case Increment:
+        case Abs:
+        case Decrement: single_operation_code(quad);
                 break;
-        
-        // Relation operations   
-        case Equal: 
-        case NotEqual: 
-        case GreaterThan: 
-        case GreaterThanEqual: 
-        case LesserThan: 
-        case LesserThanEqual: rel_operation_code(quad); 
+
+        // Relation operations
+        case Equal:
+        case NotEqual:
+        case GreaterThan:
+        case GreaterThanEqual:
+        case LesserThan:
+        case LesserThanEqual: rel_operation_code(quad);
                 break;
-        
-        // Jump operations     
-        case Printf: 
-        case Printi: 
-        case Goto: 
-        case Return: 
-        case Exit: jump_operation_code(quad); 
+
+        // Jump operations
+        case Printf:
+        case Printi:
+        case Goto:
+        case Return:
+        case Exit: jump_operation_code(quad);
                 break;
-        
-        case LoadAddress: 
-        case LoadWAddress: 
+
+        case LoadAddress:
+        case LoadWAddress:
         case SaveWAddress: adresse_operation_tab(quad);
 				break;
-                
+
         default : printf("Exception:(gencode MIPS)!");
     }
-    
+
     gen_quad_code(quad->next);
 }
 
@@ -85,12 +86,12 @@ void bin_operation_code(Quad quad)
 	//perform the operation
 	switch(quad->operation)
 	{
-        case Add: if(is_constant_symbol(quad->arg1)) 
+        case Add: if(is_constant_symbol(quad->arg1))
 			  {
 					load_value(quad->arg2, "$t1");
 					fprintf(fichier_sortie, "\tadd\t$t0, $t1, %d\n", quad->arg1->data.number);
 			  }
-			  else if(is_constant_symbol(quad->arg2)) 
+			  else if(is_constant_symbol(quad->arg2))
 				{
 					load_value(quad->arg1, "$t1");
 					fprintf(fichier_sortie, "\tadd\t$t0, $t1, %d\n", quad->arg2->data.number);
@@ -102,12 +103,12 @@ void bin_operation_code(Quad quad)
 					fprintf(fichier_sortie, "\tadd\t$t0, $t1, $t2\n");
 				}
                 break;
-        case Mult: if(is_constant_symbol(quad->arg1)) 
+        case Mult: if(is_constant_symbol(quad->arg1))
 			  {
 					load_value(quad->arg2, "$t1");
 					fprintf(fichier_sortie, "\tmul\t$t0, $t1, %d\n", quad->arg1->data.number);
 			  }
-			  else if(is_constant_symbol(quad->arg2)) 
+			  else if(is_constant_symbol(quad->arg2))
 				{
 					load_value(quad->arg1, "$t1");
 					fprintf(fichier_sortie, "\tmul\t$t0, $t1, %d\n", quad->arg2->data.number);
@@ -119,7 +120,7 @@ void bin_operation_code(Quad quad)
 					fprintf(fichier_sortie, "\tmul\t$t0, $t1, $t2\n");
 				}
                 break;
-        case Sub: if(is_constant_symbol(quad->arg2)) 
+        case Sub: if(is_constant_symbol(quad->arg2))
 			{
 				load_value(quad->arg1, "$t1");
 				fprintf(fichier_sortie, "\tsub\t$t0, $t1, %d\n", quad->arg2->data.number);
@@ -131,7 +132,7 @@ void bin_operation_code(Quad quad)
 				fprintf(fichier_sortie, "\tsub\t$t0, $t1, $t2\n");
 			}
                 break;
-        case Div: if(is_constant_symbol(quad->arg2)) 
+        case Div: if(is_constant_symbol(quad->arg2))
 			{
 				load_value(quad->arg1, "$t1");
 				fprintf(fichier_sortie, "\tdiv\t$t0, $t1, %d\n", quad->arg2->data.number);
@@ -143,7 +144,7 @@ void bin_operation_code(Quad quad)
 				fprintf(fichier_sortie, "\tdiv\t$t0, $t1, $t2\n");
 			}
                 break;
-        case Modulo: if(is_constant_symbol(quad->arg2)) 
+        case Modulo: if(is_constant_symbol(quad->arg2))
 				{
 					load_value(quad->arg1, "$t1");
 					fprintf(fichier_sortie, "\trem\t$t0, $t1, %d\n", quad->arg2->data.number);
@@ -177,7 +178,7 @@ void bin_operation_code(Quad quad)
 		}
 	// save the value to the variable
 	fprintf(fichier_sortie, "\tsw\t$t0, %s\n",quad->res->name);
-	
+
 }
 
 void single_operation_code(Quad quad)
@@ -242,33 +243,33 @@ void jump_operation_code(Quad quad)
 	//print the label
 	if(quad->label > -1 && quad->operation != Goto)
 		fprintf(fichier_sortie, "L_%d:\n",quad->label);
-		
+
 	//perform the operation
 	switch(quad->operation)
 	{
-					
+
         case Goto :fprintf(fichier_sortie, "\tj\tL_%d\n",quad->res->data.number);
 				break;
-				
+
         case Printi: load_value(quad->res, "$t1");
 					 fprintf(fichier_sortie, "\tmove\t$a0, $t1\n");
 					 fprintf(fichier_sortie, "\tjal\tPrint_i\n");
                 break;
-        
+
         case Printf: fprintf(fichier_sortie, "\tla\t$a0, %s\n",quad->res->name);
 					 fprintf(fichier_sortie, "\tjal\tPrint_f\n");
                 break;
-                
+
         case Exit :load_value(quad->res, "$t1");
 					  fprintf(fichier_sortie, "\tmove\t$a0, $t1\n");
 					  fprintf(fichier_sortie, "\tjal\tExit_with_value\n");
                 break;
-                
+
         case Return : load_value(quad->res, "$t1");
 					  fprintf(fichier_sortie, "\tmove\t$a0, $t1\n");
 					  fprintf(fichier_sortie, "\tjal\tExit_with_value\n");
                 break;
-      
+
 	}
 }
 
@@ -277,11 +278,11 @@ void adresse_operation_tab(Quad quad)
 	//print the label
 	if(quad->label > -1)
 		fprintf(fichier_sortie, "L_%d:\n",quad->label);
-	else 
+	else
 		fprintf(fichier_sortie, "\n");
-	
+
 	switch(quad->operation)
-	{              
+	{
         case LoadAddress :  fprintf(fichier_sortie, "\tla $s0,  %s\n", quad->arg1->name);
 							fprintf(fichier_sortie, "\tsw $s0, %s\n", quad->res->name);
                 break;
@@ -299,10 +300,10 @@ void adresse_operation_tab(Quad quad)
 
 void load_value(Symbol symbol, char* register_name)
 {
-	
+
 	if(symbol == NULL)
 		return	;
-	
+
 	switch (symbol->data_type)
 	{
 		case Constant : if(strstr(symbol->name,CONSTANT_) != NULL)
@@ -316,33 +317,32 @@ void load_value(Symbol symbol, char* register_name)
 }
 
 
-void gen_system_service_const() 
+void gen_system_service_const()
 {
 		fprintf(fichier_sortie, "\t#System call service Constant\n");
 		fprintf(fichier_sortie, "\tSYS_STRING_PRINT:\t4\n");
 		fprintf(fichier_sortie, "\tSYS_INT_PRINT:\t1\n");
 		fprintf(fichier_sortie, "\tSYS_EXIT:\t10\n");
 		fprintf(fichier_sortie, "\tSYS_EXIT_VALUE:\t17\n\n");
-		
+
 		return;
 }
 
-void gen_utils_function() 
+void gen_utils_function()
 {
 	gen_function_exit();
-	gen_function_stenC();
 	gen_function_print_string();
 	gen_function_print_int();
 	gen_function_exit_value();
 	return;
 }
 
-void gen_entete_comment() 
+void gen_entete_comment()
 {
 	fprintf(fichier_sortie, "#M1ILC2017 Represente\n");
 	fprintf(fichier_sortie, "#Compilation Pelletier et Delrue\n");
 	fprintf(fichier_sortie, "\t#-----------------#\n\n");
-		
+
 	return;
 }
 
@@ -355,31 +355,6 @@ void gen_function_exit()
 	fprintf(fichier_sortie, "Exit:\n");
 		fprintf(fichier_sortie, "\tlw   $v0, SYS_EXIT\n");
 		fprintf(fichier_sortie, "\tsyscall\n\n");
-
-	return;
-} 
-
-void gen_function_stenC()
-{
-	fprintf(fichier_sortie, "# Sert à stenC\n");
-    fprintf(fichier_sortie, "#Passer les arguments dans $a0(tableau) $a1(taille) $a2(variable) avant l'appel à la fonction\n");
-    fprintf(fichier_sortie, "StenC:\n");
-        fprintf(fichier_sortie, "\tli	$v0, 0\n");
-		fprintf(fichier_sortie, "\tli	$t1, 0\n");
-		fprintf(fichier_sortie, "\tli	$t5, 0\n");
-		fprintf(fichier_sortie, "\tFor:\n");
-	    	fprintf(fichier_sortie, "\t\tbge  $t1, $a1, End_for\n");
-	    		fprintf(fichier_sortie, "\t\t\tlw $t5, ($a0)\n\n");
-	    	
-	    		fprintf(fichier_sortie, "\t\t\tmul $t5, $a2, $t5\n");
-	    		fprintf(fichier_sortie, "\t\t\tadd $v0, $v0, $t5\n\n");
-
-	    		fprintf(fichier_sortie, "\t\t\taddi $a0, $a0, 4\n");
-	    		fprintf(fichier_sortie, "\t\t\taddi $t1, $t1, 1\n\n");
-				
-		    fprintf(fichier_sortie, "\t\tj For\n");
-		fprintf(fichier_sortie, "\t\tEnd_for:\n");
-			fprintf(fichier_sortie, "\tjr   $ra\n\n");
 
 	return;
 }
@@ -417,4 +392,3 @@ void gen_function_exit_value()
 		fprintf(fichier_sortie, "\tsyscall\n\n");
 	return;
 }
-

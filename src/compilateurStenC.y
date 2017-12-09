@@ -1,17 +1,37 @@
 %{
-  #include "compilateurStenC.h"
+	#include "quad.h"
+	#include "symbol.h"
+	#include "symbol_table.h"
+	#include "array_type.h"
+	#include "operation.h"
+	#include "gen_code_mips.h"
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include <stdarg.h>
+	#include <string.h>
 
-  extern void yyerror(const char * s);
-  extern int yylex();
+	int yylex(void);
+	void yyerror(char *s);
+	void lex_free();
+	
+	
+	extern SymbolTable symbol_table ;
+	extern unsigned int next_quad_label;
+	Expression program_expression;
+	
 %}
 
+
 %union {
-  long int intval;
-  name_t strval;
-  struct {
-      symbol * ptr;
-  } exprval;
-}
+	int int_value;                 /* nombre */
+	char* string_value;
+	Symbol symbol;
+	condition_t condition;
+	expression_t expression;
+	ArrayList array_list;
+	array_ref_t reference_to_array;
+};
+%token <symbol> M
 %token STRING_LITERAL MAIN
 %token <strval> IDENTIFIER
 %token <intval> NUMBER
@@ -55,22 +75,16 @@ function_declaration
 primary_expression
 	: IDENTIFIER
     {
-      symbol * id = symtable_get(SYMTAB,$1);
-      if ( id == NULL )
-      {
-          fprintf(stderr,"Name '%s' undeclared\n",$1);
-          exit(1);
-      }
-      $$.ptr = id;
+
     }
   | NUMBER
     {
-      $$.ptr = symtable_const(SYMTAB,$1);
+
     }
 	| STRING_LITERAL
 	| '(' expression ')'
     {
-      $$.ptr = $2.ptr;
+
     }
 	;
 
@@ -138,12 +152,12 @@ equality_expression
 
 logical_and_expression
 	: equality_expression
-	| logical_and_expression AND_OP equality_expression
+	| logical_and_expression AND_OP M equality_expression
 	;
 
 logical_or_expression
 	: logical_and_expression
-	| logical_or_expression OR_OP logical_and_expression
+	| logical_or_expression OR_OP M logical_and_expression
 	;
 
 assignment_expression
@@ -220,20 +234,24 @@ expression_statement
 	;
 
 selection_statement
-	: IF '(' expression ')' statement
-	| IF '(' expression ')' statement ELSE statement
+	: IF '(' expression ')' M statement
+	| IF '(' expression ')' M statement ELSE M statement
 	;
 
 iteration_statement
-	: WHILE '(' expression ')' statement
-	| FOR '(' expression_statement expression_statement ')' statement
-	| FOR '(' expression_statement expression_statement expression ')' statement
+	: WHILE '(' expression ')' M statement
+	| FOR '(' expression_statement expression_statement ')' M statement
+	| FOR '(' expression_statement expression_statement expression ')' M statement
 	;
 
 jump_statement
 	: CONTINUE ';'
 	| RETURN ';'
 	| RETURN expression ';'
+	;
+
+M
+	: {$$ = table_new_number(symbol_table, next_quad_label);}
 	;
 %%
 

@@ -9,30 +9,30 @@
 SymbolTable table_create(int size)
 {
 	SymbolTable symbol_table;
-	int i; 
+	int i;
 	// taille non null et allocation memoire reussie ?
 	if(size < 1 || (symbol_table = malloc(sizeof(symbol_table_t))) == NULL)
 		return NULL;
-	
+
 	// Allocation memoire des elements reussie? And initialisation
 	if((symbol_table->table = calloc(size, sizeof(symbol_t))) == NULL)
 		return NULL;
-		
+
 	symbol_table->size = size;
 	return symbol_table;
 }
 
 
 Symbol table_add_symbol(SymbolTable symbol_table, char* name, Symbol symbol)
-{	
-	if(name == NULL || symbol == NULL) 
+{
+	if(name == NULL || symbol == NULL)
 		return NULL;
-	
+
 	unsigned long index = hash_fuction(name);
 	index %= symbol_table->size;
 	symbol->successor = symbol_table->table[index];
 	symbol_table->table[index] = symbol;
- 	
+
  	return symbol;
 }
 
@@ -41,13 +41,13 @@ Symbol table_lookup(SymbolTable symbol_table, char* name)
 {
 	Symbol symbol;
 
-	if(name == NULL) 
+	if(name == NULL)
 		return NULL;
-	
+
 	unsigned long index = hash_fuction(name);
 	index %= symbol_table->size;
 	symbol = symbol_lookup(symbol_table->table[index], name);
-	
+
 	return symbol;
 }
 
@@ -58,7 +58,7 @@ Symbol table_new_integer(SymbolTable symbol_table, char* name)
 		error_message(symbol);
 		return symbol;
 	}
-	symbol = symbol_new_integer(name);	
+	symbol = symbol_new_integer(name);
 	symbol->state = Initialized;
 	table_add_symbol(symbol_table,name, symbol);
 	return symbol;
@@ -82,12 +82,12 @@ Symbol table_new_constant(SymbolTable symbol_table, char* name, int number)
 Symbol table_new_number(SymbolTable symbol_table, int number)
 {
 	static char const_id_name[MAX_NAME_LENGTH];
-	
+
 	print_to_string(const_id_name, CONSTANT_, number);
 	Symbol symbol = table_lookup(symbol_table, const_id_name);
 	if(symbol != NULL)
 		return symbol;
-	
+
 	char* const_name = strdup(const_id_name);
 	symbol = symbol_new_constant(const_name, number);
 	table_add_symbol(symbol_table,const_name, symbol);
@@ -139,13 +139,13 @@ void table_print(SymbolTable symbol_table)
 void table_remove(SymbolTable symbol_table, char* name)
 {
 	 Symbol tmp_symbol;
-	
-	if(name == NULL) 
+
+	if(name == NULL)
 		return ;
-		
+
 	unsigned long index = hash_fuction(name);
 	index %= symbol_table->size;
-	
+
 	if(symbol_table->table[index]!=NULL)
 	{
 		if(strcmp(symbol_table->table[index]->name, name) == 0)
@@ -158,19 +158,19 @@ void table_remove(SymbolTable symbol_table, char* name)
 		//else
 			//return;
 	}
-	
-		
+
+
 	 tmp_symbol = symbol_table->table[index];
 	 while(tmp_symbol->successor != NULL)
 	 {
 		 if(strcmp(tmp_symbol->successor->name, name) == 0)
 		 {
-			Symbol tmp_symbol2 = tmp_symbol->successor; 
+			Symbol tmp_symbol2 = tmp_symbol->successor;
 			tmp_symbol->successor = tmp_symbol->successor->successor;
 			symbol_free(tmp_symbol2) ;
 			return;
 		 }
-		tmp_symbol = tmp_symbol->successor ; 
+		tmp_symbol = tmp_symbol->successor ;
 	 }
 }
 
@@ -180,8 +180,8 @@ void table_free(SymbolTable symbol_table)
 	if(symbol_table == NULL)
 		return;
 	int i;
-	Symbol tmp_symbol; 
-	Symbol symbol_to_free; 
+	Symbol tmp_symbol;
+	Symbol symbol_to_free;
 	for( i = 0; i < symbol_table->size ; i++)
 	{
 		tmp_symbol = symbol_table->table[i];
@@ -190,15 +190,15 @@ void table_free(SymbolTable symbol_table)
 			symbol_to_free = tmp_symbol;
 			tmp_symbol = tmp_symbol->successor;
 			symbol_free(symbol_to_free);
-			
+
 		}
 	}
 	free(symbol_table->table);
 	symbol_table->table = NULL;
 	free(symbol_table);
 	symbol_table = NULL;
-	
-	
+
+
 }
 
 /*
@@ -234,12 +234,12 @@ void error_message(Symbol symbol)
 void table_print_code(SymbolTable symbol_table, FILE* output_file)
 {
 	int i ;
-	
-	
+
+
 	fprintf(output_file,"\t#String constante\n");
 	for( i = 0 ; i < symbol_table->size ; i++)
 		symbol_print_code(symbol_table->table[i], output_file, String);
-		
+
 	fprintf(output_file,"\t#Integer variable\n");
 	for( i = 0 ; i < symbol_table->size ; i++)
 		symbol_print_code(symbol_table->table[i], output_file, Integer);
@@ -247,14 +247,5 @@ void table_print_code(SymbolTable symbol_table, FILE* output_file)
 	fprintf(output_file,"\t#Integer Constant\n");
 	for( i = 0 ; i < symbol_table->size ; i++)
 		symbol_print_code(symbol_table->table[i], output_file, Constant);
-		
-	fprintf(output_file,"\t#Array\n");
-	for( i = 0 ; i < symbol_table->size ; i++)
-		symbol_print_code(symbol_table->table[i], output_file, Arraytype);
-	
-	fprintf(output_file,"\t#Stencil\n");
-	for( i = 0 ; i < symbol_table->size ; i++)
-		symbol_print_code(symbol_table->table[i], output_file, Stencil);
-	
-	
+
 }

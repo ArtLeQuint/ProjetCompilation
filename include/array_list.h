@@ -1,4 +1,4 @@
-/*Fait par Romain Pelletie et Arthur Delrue
+/*Fait par Romain Pelletier et Arthur Delrue
  M1 ILC 2017*/
 
 #ifndef ARRAY_LIST_H
@@ -6,26 +6,16 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-typedef int Element; /**< Un élément de la list*/
-/**
- * \struct struct _array_element
- * \typedef struct _array_element array_element_t
- * \typedef struct _array_element* ArrayElement
- * Définition du type d'un élément de la liste
- */
+typedef int Element;
+/* Element d'une liste */
 typedef struct _array_element{
-	Element value; /**< La valeur du noeud */
-	struct _array_element* next; /**< Pointeur sur l'élément suivant*/
+	Element value;
+	struct _array_element* next;
 } array_element_t, *ArrayElement;
-/**
- * \struct struct array_list
- * \typedef struct _array_list array_list_t
- * \typedef struct _array_list* ArrayList 
- * Définition du type de la liste chainée d
- */
+/* Les Listes */
 typedef struct _array_list{
-		ArrayElement head; /**< Tete de la liste */
-		ArrayElement tail; /**<  La queue de la liste*/
+		ArrayElement head; 
+		ArrayElement tail;
 } array_list_t, *ArrayList;
 
 ArrayElement list_new_element(Element element);
