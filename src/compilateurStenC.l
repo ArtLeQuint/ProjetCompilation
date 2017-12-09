@@ -15,13 +15,18 @@
 
 /* Inspiré du LEX ANSI C */
 D			[0-9]
-L			[a-zA-Z_]
+N 		0|[1-9]{D}*
+L			[a-zA-Z]
+ID 		{L}({L}|{D})*
+char 	[-\[\]()<>=+*/$;{},%!]
+string 		\"[^"\n]*["\n]
+comment_multiLigne	"/*"([^*]*[*]+[^*/])*[^*]*[*]+"/"
+comment_uniLigne	"//"[^\n]*[\n]
+comment 			{comment_uniLigne}|{comment_multiLigne}
+
 
 
 %%
-(\/\*[^\*\/]*\*\/) {/* Commentaire, pour l'instant on ne fait rien, peut être à ajouter au fichier mips après. */}
-(\/\/.*\n)         {/* Commentaire, pour l'instant on ne fait rien, peut être à ajouter au fichier mips après. */}
-
 "else"				{return(ELSE);}
 "for"					{return(FOR);}
 "if"					{return(IF);}
@@ -30,25 +35,7 @@ L			[a-zA-Z_]
 "while"				{return(WHILE);}
 "stencil"			{return(STENCIL);}
 "continue"		{return(CONTINUE);}
-"main(void)"  {return(MAIN);}
-
-{L}({L}|{D})*		{
-                 yylval.string_value = strdup(yytext);
-			           return(IDENTIFIER);
-                }
-
-{D}+ 					  {yylval.int_value = atoi(yytext); return(NUMBER);}
-
-L?\"(\\.|[^\\""])*\"	{
-                       yylval.string_value = strdup(yytext+1);
-              				 if (yylval.string_value[yyleng-2] != '"')
-              				 	 yyerror("improperly terminated string");
-              				 else
-              					 yylval.string_value[yyleng-2] = 0;
-
-                       return(STRING_LITERAL);
-                     }
-
+"main(void)"|"main()"  {return(MAIN);}
 "+="		{return(ADD_ASSIGN);}
 "-="		{return(SUB_ASSIGN);}
 "*="		{return(MUL_ASSIGN);}
@@ -62,35 +49,35 @@ L?\"(\\.|[^\\""])*\"	{
 ">="		{return(GE_OP);}
 "=="		{return(EQ_OP);}
 "!="		{return(NE_OP);}
-";"			{return(';');}
-"{"		  {return('{');}
-"}"	    {return('}');}
-","			{return(',');}
-":"			{return(':');}
-"="			{return('=');}
-"("			{return('(');}
-")"			{return(')');}
-"["		  {return('[');}
-"]"		  {return(']');}
-"-"			{return('-');}
-"+"			{return('+');}
-"*"			{return('*');}
-"/"			{return('/');}
-"%"			{return('%');}
-"<"			{return('<');}
-">"			{return('>');}
+{char}  {return yytext[0];}
 
-[ \t\v\n\f]		{}
-.			        {}
+{ID}		{
+         yylval.string_value = strdup(yytext);
+			   return(IDENTIFIER);
+        }
+
+number {yylval.int_value = atoi(yytext); return(NUMBER);}
+
+{string}  {
+           yylval.string_value = strdup(yytext+1);
+           if (yylval.string_value[yyleng-2] != '"')
+             yyerror("improperly terminated string");
+           else
+             yylval.string_value[yyleng-2] = 0;
+           return(STRING_LITERAL);
+          }
+
+[ \n\t]+|{comment} {}
+. {}
 
 %%
 
 void yyerror(char* s)
 {
-	printf("Erreur near line %d : %s \n",yylineno, s);
+	printf("Erreur near line %d : %s , %s\n",yylineno, s, yytext);
 }
 
 int yywrap(void)
- {
+{
     return 1;
 }

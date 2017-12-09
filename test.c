@@ -1,7 +1,7 @@
 int main() 
 {
-	
-	int i, j;
+	int i;
+	int j;
 	int height = 128 ;
 	int width = 128; 
 	for (i = 1; i < height - 1; i++) 
