@@ -170,7 +170,7 @@ expression
 /* DECLARATIONS */
 
 integer_declaration
-	: INT assignment_expression	{ }
+	: INT expression { }
 	;
 
 /* STATEMENTS */
@@ -181,7 +181,6 @@ statement
 	| selection_statement
 	| iteration_statement
 	| jump_statement
-	| integer_declaration
 	;
 
 compound_statement
@@ -197,6 +196,7 @@ statement_list
 expression_statement
 	: ';'
 	| expression ';'
+	| integer_declaration ';'
 	;
 
 selection_statement
