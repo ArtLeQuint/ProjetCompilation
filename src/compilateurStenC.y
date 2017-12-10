@@ -66,7 +66,7 @@ program
   ;
 
 function
-  : function_declaration '{' statement_list '}'
+  : function_declaration '{' statement_list '}' {}
   ;
 
 function_declaration
