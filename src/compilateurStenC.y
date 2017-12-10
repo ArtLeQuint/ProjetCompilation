@@ -180,27 +180,7 @@ expression
 /* DECLARATIONS */
 
 integer_declaration
-<<<<<<< HEAD
-	: INT ident_list	{ }
-	;
-
-ident_list
-	: ident_val { }
-	| ident_val  ','ident_list	{
-	 }
-	;
-
-ident_val
-	: IDENTIFIER '=' expression
-	{
-
-	}
-	| IDENTIFIER	{
-	}
-=======
-	: INT expression { }
->>>>>>> 4cee0477414e7ebdab598440b17c493d1204fa3d
-	;
+	: INT expression {}
 
 /* STATEMENTS */
 
