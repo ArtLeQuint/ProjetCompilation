@@ -44,19 +44,19 @@ int main (int argc, char** argv)
 			printf("--------\n\n");
 	}
 
-	//symbol_table = table_create(SYMBOL_TABLE_SIZE);
-	printf("Compilation error : %d", yyparse());
+	symbol_table = table_create(SYMBOL_TABLE_SIZE);
+	printf("Compilation error : %d\n", yyparse());
 	fclose(yyin);
 
-	//quad_print(program_expression->code);
+	quad_print(program_expression->code);
 
-	//gen_code_mips(program_expression->code);
+	gen_code_mips(program_expression->code);
 	fclose(fichier_sortie);
-	//quad_free(program_expression->code);
-	//quad_list_free(program_expression->nextList);
+	quad_free(program_expression->code);
+	quad_list_free(program_expression->nextList);
 
-	//table_print(symbol_table);
-	//table_free(symbol_table);
+	table_print(symbol_table);
+	table_free(symbol_table);
 
 	 return 0;
 

@@ -56,7 +56,7 @@ comment 			{comment_uniLigne}|{comment_multiLigne}
 			   return(IDENTIFIER);
         }
 
-number {yylval.int_value = atoi(yytext); return(NUMBER);}
+{N} {yylval.int_value = atoi(yytext); return(NUMBER);}
 
 {string}  {
            yylval.string_value = strdup(yytext+1);

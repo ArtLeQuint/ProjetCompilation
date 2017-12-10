@@ -29,9 +29,12 @@
 	expression_t expression;
 	ArrayList array_list;
 };
-%token STRING_LITERAL MAIN
-%token IDENTIFIER
-%token NUMBER
+
+%type <expression> program function function_declaration
+%type <expression> primary_expression
+
+%token <string_value> STRING_LITERAL MAIN IDENTIFIER
+%token <int_value> NUMBER
 %token INC_OP DEC_OP LE_OP GE_OP EQ_OP NE_OP
 %token AND_OP OR_OP
 %token MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN SUB_ASSIGN
@@ -54,6 +57,9 @@
 /* START */
 program
   : function
+		{
+			program_expression = &$1;
+		}
   ;
 
 function
@@ -61,7 +67,7 @@ function
   ;
 
 function_declaration
-  : INT MAIN
+  : INT MAIN {}
   ;
 
 /* EXPRESSIONS */
@@ -71,10 +77,14 @@ primary_expression
 
     }
   | NUMBER
-    {
-
-    }
+			{
+				init_to_null(&$$);
+				$$.result = table_new_number(symbol_table,$1) ;
+    	}
 	| STRING_LITERAL
+		{
+
+		}
 	| '(' expression ')'
     {
 
