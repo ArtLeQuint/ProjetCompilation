@@ -31,7 +31,10 @@
 };
 
 %type <expression> program function function_declaration
-%type <expression> primary_expression
+%type <expression> primary_expression postfix_expression unary_expression additive_expression multiplicative_expression
+%type <cond> relational_expression equality_expression logical_or_expression logical_and_expression
+%type <expression> assignment_expression expression
+%type <string_value> assignment_operator
 
 %token <string_value> STRING_LITERAL MAIN IDENTIFIER
 %token <int_value> NUMBER
