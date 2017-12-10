@@ -30,11 +30,12 @@
 	ArrayList array_list;
 };
 
-%type <expression> program function function_declaration
+%type <expression> program function
 %type <expression> primary_expression postfix_expression unary_expression additive_expression multiplicative_expression
 %type <cond> relational_expression equality_expression logical_or_expression logical_and_expression
 %type <expression> assignment_expression expression
 %type <string_value> assignment_operator
+%type <expression> statement statement_list compound_statement jump_statement iteration_statement selection_statement expression_statement
 
 %token <string_value> STRING_LITERAL MAIN IDENTIFIER
 %token <int_value> NUMBER
@@ -66,31 +67,32 @@ program
   ;
 
 function
-  : function_declaration '{' statement_list '}' {}
-  ;
-
-function_declaration
-  : INT MAIN {}
+  : INT MAIN '{' statement_list '}'
+		{
+			$$ = $4;
+		}
   ;
 
 /* EXPRESSIONS */
 primary_expression
 	: IDENTIFIER
     {
-
+			init_to_null(&$$);
+			$$.result = table_new_integer(symbol_table,$1) ;
     }
   | NUMBER
-			{
-				init_to_null(&$$);
-				$$.result = table_new_number(symbol_table,$1) ;
-    	}
+		{
+			init_to_null(&$$);
+			$$.result = table_new_number(symbol_table,$1) ;
+    }
 	| STRING_LITERAL
 		{
-
+			init_to_null(&$$);
+			$$.result = table_new_string(symbol_table,$1) ;
 		}
 	| '(' expression ')'
     {
-
+			$$ = $2;
     }
 	;
 
